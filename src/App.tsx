@@ -18,19 +18,15 @@ import {
   Zap,
 } from 'lucide-react';
 
-// ============================================
-// WORD DATA - 12 categories, 25+ words each (Turkish)
-// ============================================
-
 const WORD_CATEGORIES: Record<string, { name: string; hint: string; words: string[] }> = {
   food: {
     name: 'Yiyecekler',
     hint: 'Yenen bir şey',
     words: [
-      'Pizza', 'Sushi', 'Hamburger', 'Taco', 'Makarna', 'Dondurma', 'Çikolatalı Pasta',
+      'Pizza', 'Suşi', 'Hamburger', 'Tako', 'Makarna', 'Dondurma', 'Çikolatalı Pasta',
       'Sandviç', 'Salata', 'Çorba', 'Biftek', 'Tavuk Kızartması', 'Mantı', 'Köri',
-      'Pancake', 'Waffle', 'Bagel', 'Kruvasan', 'Donut', 'Elmalı Turta', 'Cheesecake',
-      'Sushi Ruloları', 'Ramen', 'Pho', 'Burrito', 'Quesadilla', 'Patates Kızartması', 'Soğan Halkası',
+      'Pancake', 'Waffle', 'Kruvasan', 'Donut', 'Elmalı Turta', 'Cheesecake',
+      'Patates Kızartması', 'Soğan Halkası',
     ],
   },
   animals: {
@@ -58,11 +54,11 @@ const WORD_CATEGORIES: Record<string, { name: string; hint: string; words: strin
     name: 'Ünlü Yerler',
     hint: 'Tanınmış bir yer',
     words: [
-      'Eyfel Kulesi', 'Özgürlük Heykeli', 'Çin Seddi', 'Giza Piramitleri',
+      'Eyfel Kulesi', 'Özgürlük Heykeli', 'Çin Seddi',
       'Kanyon', 'Tac Mahal', 'Kolezyum', 'Niagara Şelalesi', 'Everest Dağı',
-      'Stonehenge', 'Maçu Piçu', 'Santorini', 'Venedik', 'Tokyo Kulesi', 'Big Ben',
-      'Sidney Opera Binası', 'Altın Kapı Köprüsü', 'Times Meydanı', 'Merkez Park',
-      'Disneyland', 'Hollywood Yazısı', 'Pisa Kulesi', 'Matterhorn',
+      'Venedik', 'Tokyo Kulesi', 
+      'Sidney Opera Binası', 'Times Meydanı',
+      'Hollywood Yazısı', 'Pisa Kulesi',
       'Yellowstone', 'Amazon Yağmur Ormanları', 'Sahra Çölü', 'Kuzey Işıkları',
     ],
   },
@@ -87,17 +83,19 @@ const WORD_CATEGORIES: Record<string, { name: string; hint: string; words: strin
       'Şemsiye', 'Sırt Çantası', 'Gözlük', 'Kol Saati', 'Cüzdan', 'Çanta', 'Makas',
     ],
   },
-  movies: {
-    name: 'Film Türleri',
-    hint: 'Bir film türü',
-    words: [
-      'Korku Filmi', 'Aksiyon Filmi', 'Komedi', 'Romantik', 'Gerilim', 'Bilim Kurgu',
-      'Fantastik', 'Belgesel', 'Animasyon', 'Müzikal', 'Western', 'Savaş Filmi',
-      'Gizem', 'Macera', 'Suç Dramı', 'Tarihi', 'Süper Kahraman Filmi',
-      'Felaket Filmi', 'Casus Filmi', 'Soygun Filmi', 'Spor Filmi', 'Aile Filmi',
-      'Canavar Filmi', 'Zombi Filmi', 'Hayalet Hikayesi', 'Masal',
-    ],
-  },
+  /** 
+    movies: {
+      name: 'Film Türleri',
+      hint: 'Bir film türü',
+      words: [
+        'Korku Filmi', 'Aksiyon Filmi', 'Komedi', 'Romantik', 'Gerilim', 'Bilim Kurgu',
+        'Fantastik', 'Belgesel', 'Animasyon', 'Müzikal', 'Western', 'Savaş Filmi',
+        'Gizem', 'Macera', 'Suç Dramı', 'Tarihi', 'Süper Kahraman Filmi',
+        'Felaket Filmi', 'Casus Filmi', 'Soygun Filmi', 'Spor Filmi', 'Aile Filmi',
+        'Canavar Filmi', 'Zombi Filmi', 'Hayalet Hikayesi', 'Masal',
+      ],
+    },
+  */
   characters: {
     name: 'Karakter Türleri',
     hint: 'Bir karakter türü',
@@ -114,8 +112,8 @@ const WORD_CATEGORIES: Record<string, { name: string; hint: string; words: strin
     words: [
       'Orman', 'Plaj', 'Çöl', 'Dağ', 'Nehir', 'Göl', 'Şelale',
       'Mağara', 'Volkan', 'Buzul', 'Kanyon', 'Vadi', 'Çayır', 'Bataklık',
-      'Yağmur Ormanı', 'Ada', 'Uçurum', 'Tepe', 'Gölet', 'Dere', 'Jungle',
-      'Tundra', 'Sazlık', 'Resif', 'Kum Tepesi', 'Lagün', 'Fiyort', 'Yayla',
+      'Yağmur Ormanı', 'Ada', 'Uçurum', 'Tepe', 'Gölet', 'Dere',
+      'Sazlık', 'Resif', 'Kum Tepesi', 'Yayla',
     ],
   },
   school: {
@@ -124,7 +122,7 @@ const WORD_CATEGORIES: Record<string, { name: string; hint: string; words: strin
     words: [
       'Kurşun Kalem', 'Defter', 'Silgi', 'Sırt Çantası', 'Hesap Makinesi', 'Cetvel',
       'Makas', 'Yapıştırıcı', 'Zımba', 'Dosya', 'Beyaz Tahta', 'Tahta Kalemi',
-      'Projektör', 'Bilgisayar', 'Yazıcı', 'Masa', 'Sandalye', 'Dolap',
+      'Projeksiyon Cihazı', 'Bilgisayar', 'Yazıcı', 'Masa', 'Sandalye', 'Dolap',
       'Ders Kitabı', 'Flüoresan Kalemi', 'Bant', 'Ataş', 'Dolma Kalem', 'Klasör',
       'Yazı Tahtası', 'Dünya Küresi', 'Mikroskop', 'Resim Sehpası',
     ],
@@ -135,9 +133,8 @@ const WORD_CATEGORIES: Record<string, { name: string; hint: string; words: strin
     words: [
       'Gitar', 'Piyano', 'Keman', 'Davul', 'Flüt', 'Trompet', 'Saksofon',
       'Klarnet', 'Çello', 'Harp', 'Zil', 'Akordeon', 'Mızıka',
-      'Banjo', 'Ukulele', 'Obua', 'Fagot', 'Trombon', 'Tuba', 'Synthesizer',
-      'Mandolin', 'Ksilofon', 'Üçgen', 'Zil', 'Marakas', 'Bas Gitar',
-      'Klavye', 'Org',
+      'Banjo', 'Ukulele', 'Obua', 'Fagot', 'Trombon',
+      'Mandolin', 'Zil', 'Bas Gitar', 'Klavye', 'Org',
     ],
   },
   technology: {
@@ -145,17 +142,13 @@ const WORD_CATEGORIES: Record<string, { name: string; hint: string; words: strin
     hint: 'Teknolojik bir cihaz',
     words: [
       'Akıllı Telefon', 'Dizüstü Bilgisayar', 'Tablet', 'Akıllı Saat', 'Kulaklık', 'Kamera',
-      'Yazıcı', 'Tarayıcı', 'Projektör', 'Hoparlör', 'Mikrofon', 'Klavye',
-      'Fare', 'Monitör', 'Oyun Konsolu', 'VR Gözlük', 'Drone', 'Fitness Takipçisi',
-      'E-Okuyucu', 'Router', 'USB Bellek', 'Harici Disk', 'Web Kamera',
-      'Şarj Aleti', 'Bluetooth Kulaklık', 'Power Bank', 'Stream Cihazı', 'Akıllı TV',
+      'Yazıcı', 'Tarayıcı', 'Projeksiyon Cihazı', 'Hoparlör', 'Mikrofon', 'Klavye',
+      'Fare', 'Monitör', 'Oyun Konsolu', 'VR Gözlük', 'Drone',
+      'Router', 'USB Bellek', 'Harici Disk', 'Web Kamera',
+      'Şarj Aleti', 'Bluetooth Kulaklık', 'PowerBank','Akıllı TV',
     ],
   },
 };
-
-// ============================================
-// TYPES
-// ============================================
 
 type GameScreen =
   | 'mode-select'
@@ -251,9 +244,9 @@ function ModeSelectScreen({ onSelectSingle, onSelectOnline }: { onSelectSingle: 
           </span>
         </div>
         <h1 className="text-5xl font-bold text-white mb-2 tracking-tight">
-          Sahte <span className="text-red-500">Kim</span>
+          Kim <span className="text-red-500">İmposter</span>
         </h1>
-        <p className="text-slate-400 text-lg">Sosyal Çıkarım Partisi Oyunu</p>
+        <p className="text-slate-500 text-md"> Geç olmadan sahtekârı bulun..</p>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
@@ -280,9 +273,6 @@ function ModeSelectScreen({ onSelectSingle, onSelectOnline }: { onSelectSingle: 
         </button>
       </div>
 
-      <p className="text-slate-500 text-sm mt-8">
-        Sahte kişiyi bulun, çok geç olmadan...
-      </p>
     </div>
   );
 }
@@ -534,7 +524,7 @@ function SettingsScreen({
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <Skull className="w-6 h-6 text-red-500" />
-              <span className="text-white font-medium">Sahte Kişiler</span>
+              <span className="text-white font-medium">İmposter</span>
             </div>
             <div className="flex items-center gap-3">
               <button
