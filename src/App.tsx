@@ -663,13 +663,13 @@ function RoleRevealScreen({
     if (currentPlayer.isImposter) {
       return {
         title: 'İmposter',
-        subtitle: hintEnabled ? currentCategoryHint : 'Ortalığı karıştır :)',
+        subtitle: hintEnabled ? `İpucu: ${currentCategoryHint}` : null,
         icon: <Skull className="w-16 h-16 text-red-500" />,
       };
     }
     return {
       title: currentWord,
-      subtitle: 'Gizli kelime',
+      subtitle: null,
       icon: <Eye className="w-16 h-16 text-green-500" />,
     };
   };
@@ -709,7 +709,7 @@ function RoleRevealScreen({
         ) : (
           <div className="text-center">
             <div className="mb-6 flex justify-center">{content?.icon}</div>
-            <p className="text-slate-400 ">{content?.subtitle}</p>
+            {content?.subtitle && <p className="text-slate-400">{content.subtitle}</p>}
             <h2 className={`text-2xl font-bold mb-6 ${currentPlayer.isImposter ? 'text-red-500' : 'text-white'}`}>
               {content?.title}
             </h2>
