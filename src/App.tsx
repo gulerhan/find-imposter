@@ -12,7 +12,6 @@ import {
   Clock,
   AlertTriangle,
   RefreshCw,
-  Vote,
   Skull,
   Target,
   Zap,
@@ -157,7 +156,6 @@ type GameScreen =
   | 'settings'
   | 'role-reveal'
   | 'clue-round'
-  | 'voting'
   | 'results';
 
 interface Player {
@@ -180,9 +178,6 @@ interface GameState {
   currentCategoryHint: string;
   currentPlayerIndex: number;
   usedWords: string[];
-  clueRoundCount: number;
-  selectedForVote: string[];
-  imposterGuessResult: 'correct' | 'incorrect' | null;
   isOnline: boolean;
 }
 
@@ -667,14 +662,14 @@ function RoleRevealScreen({
     if (!isRevealed) return null;
     if (currentPlayer.isImposter) {
       return {
-        title: 'SAHTE',
-        subtitle: hintEnabled ? currentCategoryHint : 'Karışmaya çalış...',
+        title: 'İmposter',
+        subtitle: hintEnabled ? currentCategoryHint : 'Ortalığı karıştır :)',
         icon: <Skull className="w-16 h-16 text-red-500" />,
       };
     }
     return {
       title: currentWord,
-      subtitle: 'Bu gizli kelime',
+      subtitle: 'Gizli kelime',
       icon: <Eye className="w-16 h-16 text-green-500" />,
     };
   };
@@ -714,10 +709,11 @@ function RoleRevealScreen({
         ) : (
           <div className="text-center">
             <div className="mb-6 flex justify-center">{content?.icon}</div>
-            <h2 className={`text-2xl font-bold mb-2 ${currentPlayer.isImposter ? 'text-red-500' : 'text-white'}`}>
+            <p className="text-slate-400 ">{content?.subtitle}</p>
+            <h2 className={`text-2xl font-bold mb-6 ${currentPlayer.isImposter ? 'text-red-500' : 'text-white'}`}>
               {content?.title}
             </h2>
-            <p className="text-slate-400 mb-6">{content?.subtitle}</p>
+            
 
             <button
               onClick={handleNext}
@@ -750,14 +746,14 @@ function ClueRoundScreen({
   timerEnabled,
   timerDuration,
   onNextPlayer,
-  onGoToVoting,
+  onGoToResults,
 }: {
   players: Player[];
   currentPlayerIndex: number;
   timerEnabled: boolean;
   timerDuration: number;
   onNextPlayer: () => void;
-  onGoToVoting: () => void;
+  onGoToResults: () => void;
 }) {
   const [timeLeft, setTimeLeft] = useState(timerDuration);
   const [roundCount, setRoundCount] = useState(1);
@@ -788,7 +784,7 @@ function ClueRoundScreen({
     onNextPlayer();
   };
 
-  const canVote = roundCount >= 1;
+  const canShowResults = roundCount >= 1;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col p-4">
@@ -826,18 +822,18 @@ function ClueRoundScreen({
 
       <div className="max-w-md mx-auto w-full">
         <button
-          onClick={onGoToVoting}
-          disabled={!canVote}
+          onClick={onGoToResults}
+          disabled={!canShowResults}
           className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
-            canVote
+            canShowResults
               ? 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white shadow-lg shadow-red-500/30'
               : 'bg-slate-700 text-slate-500 cursor-not-allowed'
           }`}
         >
-          <Vote className="w-5 h-5 inline-block mr-2" />
-          Oylamaya Geç
+          <Eye className="w-5 h-5 inline-block mr-2" />
+          Sonuçları Göster
         </button>
-        {!canVote && <p className="text-slate-500 text-sm text-center mt-2">En az bir tur tamamlayın</p>}
+        {!canShowResults && <p className="text-slate-500 text-sm text-center mt-2">En az bir tur tamamlayın</p>}
       </div>
 
       <div className="mt-6 flex gap-2 justify-center flex-wrap">
@@ -860,120 +856,12 @@ function ClueRoundScreen({
   );
 }
 
-function VotingScreen({
-  players,
-  selectedForVote,
-  onToggleVote,
-  onConfirmVote,
-  imposterGuessResult,
-  onImposterGuess,
-  actualImposters,
-}: {
-  players: Player[];
-  selectedForVote: string[];
-  onToggleVote: (playerId: string) => void;
-  onConfirmVote: () => void;
-  imposterGuessResult: 'correct' | 'incorrect' | null;
-  onImposterGuess: (guess: string) => void;
-  actualImposters: string[];
-}) {
-  const [showImposterGuess, setShowImposterGuess] = useState(false);
-  const [imposterGuessInput, setImposterGuessInput] = useState('');
-
-  const allSelected = selectedForVote.length > 0;
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col p-4">
-      <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2">Oylama Zamanı</h1>
-        <p className="text-slate-400">Sahte kişinin kim olduğunu düşünüyorsun?</p>
-      </div>
-
-      <div className="flex-1 max-w-md mx-auto w-full">
-        <div className="space-y-3 mb-6">
-          {players.map((player) => (
-            <button
-              key={player.id}
-              onClick={() => onToggleVote(player.id)}
-              className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
-                selectedForVote.includes(player.id)
-                  ? 'bg-red-500/20 border-red-500 text-white'
-                  : 'bg-slate-800/50 border-slate-700 text-slate-300 hover:border-slate-500'
-              }`}
-            >
-              <span className="font-medium">{player.name}</span>
-              {selectedForVote.includes(player.id) && <Check className="w-5 h-5 text-red-400" />}
-            </button>
-          ))}
-        </div>
-
-        <button
-          onClick={onConfirmVote}
-          disabled={!allSelected}
-          className={`w-full py-4 rounded-xl font-bold text-lg mb-4 transition-all ${
-            allSelected
-              ? 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white shadow-lg shadow-red-500/30'
-              : 'bg-slate-700 text-slate-500 cursor-not-allowed'
-          }`}
-        >
-          Sonuçları Açığa Çıkar
-        </button>
-
-        {/* Imposter guess section */}
-        <div className="mt-6 pt-6 border-t border-slate-700">
-          <button
-            onClick={() => setShowImposterGuess(!showImposterGuess)}
-            className="w-full text-slate-400 hover:text-white transition-colors text-center"
-          >
-            Sahte kişi kelimeyi tahmin etmek ister mi?
-          </button>
-
-          {showImposterGuess && (
-            <div className="mt-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-              <p className="text-slate-400 text-sm mb-3">Sahte Kişi: Gizli kelime neydi?</p>
-              <input
-                type="text"
-                value={imposterGuessInput}
-                onChange={(e) => setImposterGuessInput(e.target.value)}
-                placeholder="Tahmininizi girin..."
-                className="w-full bg-slate-700 text-white px-4 py-3 rounded-lg mb-3 outline-none focus:ring-2 focus:ring-red-500"
-              />
-              <button
-                onClick={() => {
-                  onImposterGuess(imposterGuessInput);
-                  setImposterGuessInput('');
-                }}
-                disabled={!imposterGuessInput.trim()}
-                className="w-full py-3 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-600 disabled:text-slate-400 text-white font-bold rounded-lg transition-colors"
-              >
-                Tahmini Gönder
-              </button>
-
-              {imposterGuessResult && (
-                <div
-                  className={`mt-3 p-3 rounded-lg text-center font-bold ${
-                    imposterGuessResult === 'correct' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                  }`}
-                >
-                  {imposterGuessResult === 'correct' ? 'Doğru! Sahte kişiler kazandı!' : 'Yanlış tahmin!'}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function ResultsScreen({
-  votedCorrectly,
   imposters,
   currentWord,
   onNewRound,
   onNewGame,
 }: {
-  votedCorrectly: boolean;
   imposters: Player[];
   currentWord: string;
   onNewRound: () => void;
@@ -982,13 +870,9 @@ function ResultsScreen({
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center p-4">
       <div className="text-center mb-8">
-        <div className="text-6xl mb-4">{votedCorrectly ? '🎉' : '😈'}</div>
-        <h1 className="text-4xl font-bold text-white mb-2">
-          {votedCorrectly ? 'Oyuncular Kazandı!' : 'Sahte Kişiler Kazandı!'}
-        </h1>
-        <p className="text-slate-400">
-          {votedCorrectly ? 'Sahte kişileri yakaladınız!' : 'Sahte kişiler kaçtı...'}
-        </p>
+        <div className="text-6xl mb-4">🎭</div>
+        <h1 className="text-4xl font-bold text-white mb-2">Oyun Bitti!</h1>
+        <p className="text-slate-400">Gizli kelime ve sahte kişi(ler) açıklandı</p>
       </div>
 
       <div className="bg-slate-800/50 rounded-2xl p-6 max-w-sm w-full border border-slate-700 mb-6">
@@ -1049,9 +933,6 @@ function App() {
     currentCategoryHint: '',
     currentPlayerIndex: 0,
     usedWords: [],
-    clueRoundCount: 0,
-    selectedForVote: [],
-    imposterGuessResult: null,
     isOnline: false,
   });
 
@@ -1120,8 +1001,6 @@ function App() {
         currentCategoryHint: resetWord.hint,
         usedWords: [resetWord.word],
         screen: 'role-reveal',
-        selectedForVote: [],
-        imposterGuessResult: null,
       }));
       return;
     }
@@ -1139,8 +1018,6 @@ function App() {
       currentCategoryHint: wordResult.hint,
       usedWords: [...prev.usedWords, wordResult.word],
       screen: 'role-reveal',
-      selectedForVote: [],
-      imposterGuessResult: null,
     }));
   }, [gameState.players, gameState.imposterCount, gameState.selectedCategories, gameState.usedWords]);
 
@@ -1179,34 +1056,6 @@ function App() {
     }));
   };
 
-  // Voting
-  const toggleVote = (playerId: string) => {
-    setGameState((prev) => {
-      const isSelected = prev.selectedForVote.includes(playerId);
-      return {
-        ...prev,
-        selectedForVote: isSelected
-          ? prev.selectedForVote.filter((id) => id !== playerId)
-          : [...prev.selectedForVote, playerId],
-      };
-    });
-  };
-
-  const confirmVote = () => {
-    setGameState((prev) => ({
-      ...prev,
-      screen: 'results',
-    }));
-  };
-
-  const handleImposterGuess = (guess: string) => {
-    const isCorrect = guess.toLowerCase().trim() === gameState.currentWord.toLowerCase().trim();
-    setGameState((prev) => ({
-      ...prev,
-      imposterGuessResult: isCorrect ? 'correct' : 'incorrect',
-    }));
-  };
-
   // New round/game
   const newRound = () => {
     startGame();
@@ -1230,18 +1079,11 @@ function App() {
       currentCategoryHint: '',
       currentPlayerIndex: 0,
       usedWords: gameState.usedWords,
-      clueRoundCount: 0,
-      selectedForVote: [],
-      imposterGuessResult: null,
       isOnline: false,
     });
   };
 
   const imposters = gameState.players.filter((p) => p.isImposter);
-  const actualImposterIds = imposters.map((p) => p.id);
-  const votedCorrectly =
-    gameState.selectedForVote.length === actualImposterIds.length &&
-    gameState.selectedForVote.every((id) => actualImposterIds.includes(id));
 
   // Render current screen
   switch (gameState.screen) {
@@ -1324,27 +1166,13 @@ function App() {
           timerEnabled={gameState.timerEnabled}
           timerDuration={gameState.timerDuration}
           onNextPlayer={nextCluePlayer}
-          onGoToVoting={() => setGameState((prev) => ({ ...prev, screen: 'voting' }))}
-        />
-      );
-
-    case 'voting':
-      return (
-        <VotingScreen
-          players={gameState.players}
-          selectedForVote={gameState.selectedForVote}
-          onToggleVote={toggleVote}
-          onConfirmVote={confirmVote}
-          imposterGuessResult={gameState.imposterGuessResult}
-          onImposterGuess={handleImposterGuess}
-          actualImposters={actualImposterIds}
+          onGoToResults={() => setGameState((prev) => ({ ...prev, screen: 'results' }))}
         />
       );
 
     case 'results':
       return (
         <ResultsScreen
-          votedCorrectly={votedCorrectly}
           imposters={imposters}
           currentWord={gameState.currentWord}
           onNewRound={newRound}
