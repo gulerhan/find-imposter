@@ -748,7 +748,6 @@ function ClueRoundScreen({
   onGoToResults: () => void;
 }) {
   const [timeLeft, setTimeLeft] = useState(timerDuration);
-  const [roundCount, setRoundCount] = useState(1);
   const currentPlayer = players[currentPlayerIndex];
 
   useEffect(() => {
@@ -769,20 +768,11 @@ function ClueRoundScreen({
     return () => clearInterval(interval);
   }, [currentPlayerIndex, timerEnabled, timerDuration, onNextPlayer]);
 
-  const handleNext = () => {
-    if (currentPlayerIndex === players.length - 1) {
-      setRoundCount((prev) => prev + 1);
-    }
-    onNextPlayer();
-  };
-
-  const canShowResults = roundCount >= 1;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="text-slate-500">İpucu Turu</div>
-        <div className="text-slate-400">Tur {roundCount}</div>
+        <div className="text-slate-400">Tur 1</div>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center">
@@ -802,30 +792,16 @@ function ClueRoundScreen({
         <p className="text-slate-400 text-center mb-8 max-w-md">
           Gizli kelimeyle ilgili tek kelimelik bir ipucu verin. Kurnaz ama çok belirsiz olmayın!
         </p>
-
-        <button
-          onClick={handleNext}
-          className="w-full max-w-xs py-4 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2 mb-4"
-        >
-          Sonraki Oyuncu
-          <ChevronRight className="w-5 h-5" />
-        </button>
       </div>
 
       <div className="max-w-md mx-auto w-full">
         <button
           onClick={onGoToResults}
-          disabled={!canShowResults}
-          className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
-            canShowResults
-              ? 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white shadow-lg shadow-red-500/30'
-              : 'bg-slate-700 text-slate-500 cursor-not-allowed'
-          }`}
+          className="w-full py-4 rounded-xl font-bold text-lg transition-all bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white shadow-lg shadow-red-500/30"
         >
           <Eye className="w-5 h-5 inline-block mr-2" />
           Sonuçları Göster
         </button>
-        {!canShowResults && <p className="text-slate-500 text-sm text-center mt-2">En az bir tur tamamlayın</p>}
       </div>
 
     </div>
