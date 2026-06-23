@@ -279,7 +279,7 @@ function ComingSoonModal({ onClose }: { onClose: () => void }) {
         <div className="text-6xl mb-4">🚧</div>
         <h2 className="text-2xl font-bold text-white mb-3">Yakında!</h2>
         <p className="text-slate-400 mb-6">
-          Çevrimiçi çok oyunculu mod şu anda geliştirme aşamasında. Güncellemeler için bizi takip edin!
+          Çevrimiçi çok oyunculu mod şu anda geliştirme aşamasında.
         </p>
         <button
           onClick={onClose}
@@ -529,7 +529,7 @@ function SettingsScreen({
               >
                 -
               </button>
-              <span className="text-2xl font-bold text-white w-8 text-center">{imposterCount}</span>
+              <span className="text-2xl font-bold text-white w-8 text-center ">{imposterCount}</span>
               <button
                 onClick={() => onImposterCountChange(Math.min(maxImposters, imposterCount + 1))}
                 disabled={imposterCount >= maxImposters}
@@ -550,8 +550,8 @@ function SettingsScreen({
             <div className="flex items-center gap-3">
               <Target className="w-6 h-6 text-amber-500" />
               <div>
-                <span className="text-white font-medium block">Sahte Kişiye İpucu</span>
-                <span className="text-slate-500 text-sm">Sahte kişiye kategori ipucu göster</span>
+                <span className="text-white font-medium block">İmposter İpucu</span>
+                <span className="text-slate-500 text-sm">İmposter olan kişiye kategori ipucu göster</span>
               </div>
             </div>
             <button
@@ -678,23 +678,26 @@ function RoleRevealScreen({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center p-4">
-      <div className="text-slate-400 mb-4 text-center">
-        {allHaveViewed ? 'Herkes rolünü gördü' : `${currentPlayerIndex + 1}. oyuncu / ${players.length}`}
+      <div className="text-3xl font-bold text-white mb-2 text-center">
+        {allHaveViewed ? 'Başlamaya hazır!' : `${currentPlayer.name}'in sırası`}
       </div>
 
-      <div className="text-3xl font-bold text-white mb-8 text-center">
-        {allHaveViewed ? 'Başlamaya hazır!' : `${currentPlayer.name}'in sırası`}
+      <div className="text-slate-400 mb-8 text-center">
+        {allHaveViewed ? 'Herkes rolünü gördü' : `${currentPlayerIndex + 1}. oyuncu / ${players.length}`}
       </div>
 
       <div
         className={`w-full max-w-sm bg-slate-800/80 rounded-3xl p-8 border-2 transition-all duration-300 ${
-          isRevealed ? 'border-slate-600' : 'border-red-500/50 shadow-lg shadow-red-500/20'
+          isRevealed ? 'border-slate-600' : 'border-red-500/50 shadow-lg shadow-red-500/20' 
         }`}
       >
         {!isRevealed ? (
           <div className="text-center">
             <div className="mb-6">
-              <div className="w-24 h-32 bg-gradient-to-b from-slate-700 to-slate-800 rounded-xl mx-auto border border-slate-600 flex items-center justify-center">
+              <div className="bg-gradient-to-b from-slate-700 to-slate-800 rounded-xl mx-auto border border-slate-600 flex items-center justify-center"  
+                style={{               
+                height: '50vh',
+              }}>
                 <span className="text-4xl">?</span>
               </div>
             </div>
@@ -708,12 +711,11 @@ function RoleRevealScreen({
           </div>
         ) : (
           <div className="text-center">
-            <div className="mb-6 flex justify-center">{content?.icon}</div>
-            {content?.subtitle && <p className="text-slate-400">{content.subtitle}</p>}
-            <h2 className={`text-2xl font-bold mb-6 ${currentPlayer.isImposter ? 'text-red-500' : 'text-white'}`}>
+            <div className=" flex justify-center">{content?.icon}</div>
+            <h2 className={`text-2xl font-bold ${currentPlayer.isImposter ? 'text-red-500' : 'text-white'}`}>
               {content?.title}
             </h2>
-            
+            {content?.subtitle && <p className="text-slate-400 mb-6">{content.subtitle}</p>}
 
             <button
               onClick={handleNext}
@@ -725,17 +727,7 @@ function RoleRevealScreen({
           </div>
         )}
       </div>
-
-      <div className="mt-8 flex gap-2">
-        {players.map((p, i) => (
-          <div
-            key={p.id}
-            className={`w-3 h-3 rounded-full ${
-              p.hasViewedRole ? 'bg-green-500' : i === currentPlayerIndex ? 'bg-red-500' : 'bg-slate-600'
-            }`}
-          />
-        ))}
-      </div>
+      
     </div>
   );
 }
@@ -797,7 +789,7 @@ function ClueRoundScreen({
         <div className="text-4xl font-bold text-white mb-4 text-center">{currentPlayer.name}</div>
         <div className="text-slate-400 mb-8">
           {currentPlayer.isStartingPlayer && (
-            <span className="bg-amber-500/20 text-amber-400 px-2 py-1 rounded text-sm">Başlangıç Oyuncusu</span>
+            <span className="bg-amber-500/20 text-amber-400 px-2 py-1 rounded text-sm">Oyuna başlar</span>
           )}
         </div>
 
@@ -836,22 +828,6 @@ function ClueRoundScreen({
         {!canShowResults && <p className="text-slate-500 text-sm text-center mt-2">En az bir tur tamamlayın</p>}
       </div>
 
-      <div className="mt-6 flex gap-2 justify-center flex-wrap">
-        {players.map((p, i) => (
-          <div
-            key={p.id}
-            className={`px-2 py-1 rounded text-xs ${
-              i === currentPlayerIndex
-                ? 'bg-red-500 text-white'
-                : players.findIndex((p2) => p2.id === p.id) < currentPlayerIndex
-                ? 'bg-slate-600 text-slate-300'
-                : 'bg-slate-700 text-slate-400'
-            }`}
-          >
-            {p.name}
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
