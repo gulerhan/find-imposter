@@ -230,7 +230,7 @@ function selectRandomWord(categories: string[], usedWords: string[]): { word: st
 // ============================================
 
 const CARD_WIDTH = 'w-full max-w-md mx-auto';
-const GAME_CARD = `${CARD_WIDTH}  rounded-3xl border-2 p-8 min-h-[420px] flex flex-col`;
+const GAME_CARD = `${CARD_WIDTH}  rounded-3xl border-2 p-4 min-h-[600px] flex flex-col`;
 const GAME_CARD_BODY = 'flex-1 flex flex-col items-center rounded-xl justify-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)]';
 
 function ModeSelectScreen({ onSelectSingle, onSelectOnline }: { onSelectSingle: () => void; onSelectOnline: () => void }) {
@@ -643,11 +643,13 @@ function RoleRevealScreen({
   onNextPlayer: () => void;
 }) {
   const [isRevealed, setIsRevealed] = useState(false);
+  const [hasPeeked, setHasPeeked] = useState(false);
   const currentPlayer = players[currentPlayerIndex];
   const allHaveViewed = players.every((p) => p.hasViewedRole);
 
   useEffect(() => {
     setIsRevealed(false);
+    setHasPeeked(false);
   }, [currentPlayerIndex]);
 
   const handleNext = () => {
@@ -655,8 +657,16 @@ function RoleRevealScreen({
     onNextPlayer();
   };
 
+  const reveal = () => {
+    setIsRevealed(true);
+    setHasPeeked(true);
+  };
+
+  const hide = () => {
+    setIsRevealed(false);
+  };
+
   const getContent = () => {
-    if (!isRevealed) return null;
     if (currentPlayer.isImposter) {
       return {
         title: 'İmposter',
@@ -684,48 +694,66 @@ function RoleRevealScreen({
       </div>
 
       <div
-        className={`${GAME_CARD} transition-all duration-300 ${isRevealed ? 'border-slate-600' : 'border-red-500/50 shadow-lg shadow-red-500/20'
-          }`}
+        className={`${GAME_CARD} transition-all duration-300 [perspective:1200px] ${
+          isRevealed ? 'border-slate-600' : 'border-red-500/50 shadow-lg shadow-red-500/20'
+        }`}
       >
-        {!isRevealed ? (
-          <div className="flex-1 flex flex-col gap-4">
-            {/* Soru işaretini tutan ayrı iç kutu */}
-            <div className="flex-1 flex items-center justify-center bg-slate-900/50 rounded-xl border border-slate-700">
-              <span className="text-6xl">?</span>
+        <div className="flex-1 flex flex-col gap-4">
+          {/* Kart - basılı tutunca dönen alan */}
+          <div
+            className="flex-1 relative [transform-style:preserve-3d] transition-transform duration-300 ease-out"
+            style={{ transform: isRevealed ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+          >
+            {/* Ön yüz - "?" */}
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-900/50 rounded-xl border border-slate-700 [backface-visibility:hidden]">
+              <span className="text-6xl text-slate-500">?</span>
             </div>
 
-            {/* Buton, ayrı blok */}
-            <button
-              onClick={() => setIsRevealed(true)}
-              className="w-full py-4 bg-red-500 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
+            {/* Arka yüz - kelime/imposter (180 derece döndürülmüş) */}
+            <div
+              className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-slate-900/50 rounded-xl border border-slate-700 p-4 [backface-visibility:hidden]"
+              style={{ transform: 'rotateY(180deg)' }}
             >
-              <Eye className="w-5 h-5" />
-              Göster
-            </button>
-          </div>
-        ) : (
-          <div className="flex-1 flex flex-col gap-4">
-            {/* İçerik, ayrı iç kutu */}
-            <div className="flex-1 flex flex-col items-center justify-center gap-4 bg-slate-900/50 rounded-xl border border-slate-700 p-4">
               {content?.icon}
               <h2 className={`text-2xl font-bold ${currentPlayer.isImposter ? 'text-red-500' : 'text-white'}`}>
                 {content?.title}
               </h2>
               {content?.subtitle && <p className="text-slate-400">{content.subtitle}</p>}
             </div>
-
-            {/* Buton, ayrı blok */}
-            <button
-              onClick={handleNext}
-              className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
-            >
-              <EyeOff className="w-5 h-5" />
-              {allHaveViewed ? 'İpucu Turuna Başla' : 'Sonraki Oyuncuya Geç'}
-            </button>
           </div>
-        )}
-      </div>
 
+          {/* Basılı tutma butonu */}
+          <button
+            onMouseDown={reveal}
+            onMouseUp={hide}
+            onMouseLeave={hide}
+            onTouchStart={reveal}
+            onTouchEnd={hide}
+            className={`w-full py-4 font-bold rounded-xl transition-colors flex items-center justify-center gap-2 select-none ${
+              isRevealed
+                ? 'bg-slate-600 text-white'
+                : 'bg-red-500 text-white'
+            }`}
+          >
+            {isRevealed ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            {isRevealed ? 'Bırak' : 'Göster'}
+          </button>
+
+          {/* İlerleme butonu - kart en az bir kere görüldüyse aktif */}
+          <button
+            onClick={handleNext}
+            disabled={!hasPeeked}
+            className={`w-full py-4 font-bold rounded-xl transition-colors flex items-center justify-center gap-2 ${
+              hasPeeked
+                ? 'bg-slate-700 hover:bg-slate-600 text-white'
+                : 'bg-slate-800 text-slate-600 cursor-not-allowed'
+            }`}
+          >
+            <ChevronRight className="w-5 h-5" />
+            {allHaveViewed ? 'İpucu Turuna Başla' : 'Sonraki Oyuncuya Geç'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
