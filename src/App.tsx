@@ -55,7 +55,7 @@ const WORD_CATEGORIES: Record<string, { name: string; hint: string; words: strin
     words: [
       'Eyfel Kulesi', 'Özgürlük Heykeli', 'Çin Seddi',
       'Kanyon', 'Tac Mahal', 'Kolezyum', 'Niagara Şelalesi', 'Everest Dağı',
-      'Venedik', 'Tokyo Kulesi', 
+      'Venedik', 'Tokyo Kulesi',
       'Sidney Opera Binası', 'Times Meydanı',
       'Hollywood Yazısı', 'Pisa Kulesi',
       'Yellowstone', 'Amazon Yağmur Ormanları', 'Sahra Çölü', 'Kuzey Işıkları',
@@ -144,7 +144,7 @@ const WORD_CATEGORIES: Record<string, { name: string; hint: string; words: strin
       'Yazıcı', 'Tarayıcı', 'Projeksiyon Cihazı', 'Hoparlör', 'Mikrofon', 'Klavye',
       'Fare', 'Monitör', 'Oyun Konsolu', 'VR Gözlük', 'Drone',
       'Router', 'USB Bellek', 'Harici Disk', 'Web Kamera',
-      'Şarj Aleti', 'Bluetooth Kulaklık', 'PowerBank','Akıllı TV',
+      'Şarj Aleti', 'Bluetooth Kulaklık', 'PowerBank', 'Akıllı TV',
     ],
   },
 };
@@ -229,6 +229,10 @@ function selectRandomWord(categories: string[], usedWords: string[]): { word: st
 // COMPONENTS
 // ============================================
 
+const CARD_WIDTH = 'w-full max-w-md mx-auto';
+const GAME_CARD = `${CARD_WIDTH}  rounded-3xl border-2 p-8 min-h-[420px] flex flex-col`;
+const GAME_CARD_BODY = 'flex-1 flex flex-col items-center rounded-xl justify-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)]';
+
 function ModeSelectScreen({ onSelectSingle, onSelectOnline }: { onSelectSingle: () => void; onSelectOnline: () => void }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center p-4">
@@ -275,7 +279,7 @@ function ModeSelectScreen({ onSelectSingle, onSelectOnline }: { onSelectSingle: 
 function ComingSoonModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-      <div className="bg-slate-800 rounded-2xl p-8 max-w-sm w-full text-center border border-slate-700 shadow-2xl">
+      <div className={`bg-slate-800 rounded-2xl p-8 ${CARD_WIDTH} text-center border border-slate-700 shadow-2xl`}>
         <div className="text-6xl mb-4">🚧</div>
         <h2 className="text-2xl font-bold text-white mb-3">Yakında!</h2>
         <p className="text-slate-400 mb-6">
@@ -384,11 +388,10 @@ function PlayerSetupScreen({
         <button
           onClick={onContinue}
           disabled={!canStart || hasEmpty}
-          className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
-            canStart && !hasEmpty
+          className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${canStart && !hasEmpty
               ? 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white shadow-lg shadow-red-500/30'
               : 'bg-slate-700 text-slate-500 cursor-not-allowed'
-          }`}
+            }`}
         >
           {!canStart ? `En az ${3 - players.length} oyuncu daha gerekli` : hasEmpty ? 'Tüm isimleri doldurun' : 'Devam Et'}
         </button>
@@ -434,11 +437,10 @@ function CategorySelectScreen({
               <button
                 key={key}
                 onClick={() => onToggleCategory(key)}
-                className={`p-4 rounded-xl border-2 transition-all ${
-                  isSelected
+                className={`p-4 rounded-xl border-2 transition-all ${isSelected
                     ? 'bg-red-500/20 border-red-500 text-white'
                     : 'bg-slate-800/50 border-slate-700 text-slate-300 hover:border-slate-500'
-                }`}
+                  }`}
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-medium">{category.name}</span>
@@ -459,11 +461,10 @@ function CategorySelectScreen({
         <button
           onClick={onContinue}
           disabled={!canContinue}
-          className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
-            canContinue
+          className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${canContinue
               ? 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white shadow-lg shadow-red-500/30'
               : 'bg-slate-700 text-slate-500 cursor-not-allowed'
-          }`}
+            }`}
         >
           {canContinue ? 'Devam Et' : 'En az bir kategori seçin'}
         </button>
@@ -556,14 +557,12 @@ function SettingsScreen({
             </div>
             <button
               onClick={onHintToggle}
-              className={`w-14 h-8 rounded-full transition-colors relative ${
-                hintEnabled ? 'bg-red-500' : 'bg-slate-600'
-              }`}
+              className={`w-14 h-8 rounded-full transition-colors relative ${hintEnabled ? 'bg-red-500' : 'bg-slate-600'
+                }`}
             >
               <div
-                className={`w-6 h-6 bg-white rounded-full absolute top-1 transition-transform ${
-                  hintEnabled ? 'translate-x-7' : 'translate-x-1'
-                }`}
+                className={`w-6 h-6 bg-white rounded-full absolute top-1 transition-transform ${hintEnabled ? 'translate-x-6' : 'translate-x-1'
+                  }`}
               />
             </button>
           </div>
@@ -583,14 +582,12 @@ function SettingsScreen({
             </div>
             <button
               onClick={onTimerToggle}
-              className={`w-14 h-8 rounded-full transition-colors relative ${
-                timerEnabled ? 'bg-blue-500' : 'bg-slate-600'
-              }`}
+              className={`w-14 h-8 rounded-full transition-colors relative ${timerEnabled ? 'bg-blue-500' : 'bg-slate-600'
+                }`}
             >
               <div
-                className={`w-6 h-6 bg-white rounded-full absolute top-1 transition-transform ${
-                  timerEnabled ? 'translate-x-7' : 'translate-x-1'
-                }`}
+                className={`w-6 h-6 bg-white rounded-full absolute top-1 transition-transform ${timerEnabled ? 'translate-x-7' : 'translate-x-1'
+                  }`}
               />
             </button>
           </div>
@@ -687,36 +684,37 @@ function RoleRevealScreen({
       </div>
 
       <div
-        className={`w-full max-w-sm bg-slate-800/80 rounded-3xl p-8 border-2 transition-all duration-300 ${
-          isRevealed ? 'border-slate-600' : 'border-red-500/50 shadow-lg shadow-red-500/20' 
-        }`}
+        className={`${GAME_CARD} transition-all duration-300 ${isRevealed ? 'border-slate-600' : 'border-red-500/50 shadow-lg shadow-red-500/20'
+          }`}
       >
         {!isRevealed ? (
-          <div className="text-center">
-            <div className="mb-6">
-              <div className="bg-gradient-to-b from-slate-700 to-slate-800 rounded-xl mx-auto border border-slate-600 flex items-center justify-center"  
-                style={{               
-                height: '50vh',
-              }}>
-                <span className="text-4xl">?</span>
-              </div>
+          <div className="flex-1 flex flex-col gap-4">
+            {/* Soru işaretini tutan ayrı iç kutu */}
+            <div className="flex-1 flex items-center justify-center bg-slate-900/50 rounded-xl border border-slate-700">
+              <span className="text-6xl">?</span>
             </div>
+
+            {/* Buton, ayrı blok */}
             <button
               onClick={() => setIsRevealed(true)}
-              className="w-full py-4 bg-red-500 hover:bg-red-400 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="w-full py-4 bg-red-500 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               <Eye className="w-5 h-5" />
               Göster
             </button>
           </div>
         ) : (
-          <div className="text-center">
-            <div className=" flex justify-center">{content?.icon}</div>
-            <h2 className={`text-2xl font-bold ${currentPlayer.isImposter ? 'text-red-500' : 'text-white'}`}>
-              {content?.title}
-            </h2>
-            {content?.subtitle && <p className="text-slate-400 mb-6">{content.subtitle}</p>}
+          <div className="flex-1 flex flex-col gap-4">
+            {/* İçerik, ayrı iç kutu */}
+            <div className="flex-1 flex flex-col items-center justify-center gap-4 bg-slate-900/50 rounded-xl border border-slate-700 p-4">
+              {content?.icon}
+              <h2 className={`text-2xl font-bold ${currentPlayer.isImposter ? 'text-red-500' : 'text-white'}`}>
+                {content?.title}
+              </h2>
+              {content?.subtitle && <p className="text-slate-400">{content.subtitle}</p>}
+            </div>
 
+            {/* Buton, ayrı blok */}
             <button
               onClick={handleNext}
               className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
@@ -727,7 +725,7 @@ function RoleRevealScreen({
           </div>
         )}
       </div>
-      
+
     </div>
   );
 }
@@ -771,30 +769,33 @@ function ClueRoundScreen({
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col p-4">
       <div className="flex items-center justify-between mb-4">
-        <div className="text-slate-500">İpucu Turu</div>
-        <div className="text-slate-400">Tur 1</div>
+        <div className="text-slate-500">Oyun kader anı</div>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="text-4xl font-bold text-white mb-4 text-center">{currentPlayer.name}</div>
-        <div className="text-slate-400 mb-8">
-          {currentPlayer.isStartingPlayer && (
-            <span className="bg-amber-500/20 text-amber-400 px-2 py-1 rounded text-sm">Oyuna başlar</span>
-          )}
-        </div>
+        <div className={`${GAME_CARD} border-slate-700 mb-6`}>
+          <div className={GAME_CARD_BODY}>
+            <div className="text-4xl font-bold text-white mb-4">{currentPlayer.name}</div>
+            <div className="text-slate-400 mb-6">
+              {currentPlayer.isStartingPlayer && (
+                <span className="bg-amber-500/20 text-amber-400 px-2 py-1 rounded text-sm">Oyuna başlar</span>
+              )}
+            </div>
 
-        {timerEnabled && (
-          <div className="text-6xl font-bold mb-8 text-white">
-            {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+            {timerEnabled && (
+              <div className="text-6xl font-bold mb-6 text-white">
+                {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+              </div>
+            )}
+
+            <p className="text-slate-400">
+              Gizli kelimeyle ilgili tek kelimelik bir ipucu verin. Kurnaz ama çok belirsiz olmayın!
+            </p>
           </div>
-        )}
-
-        <p className="text-slate-400 text-center mb-8 max-w-md">
-          Gizli kelimeyle ilgili tek kelimelik bir ipucu verin. Kurnaz ama çok belirsiz olmayın!
-        </p>
+        </div>
       </div>
 
-      <div className="max-w-md mx-auto w-full">
+      <div className={CARD_WIDTH}>
         <button
           onClick={onGoToResults}
           className="w-full py-4 rounded-xl font-bold text-lg transition-all bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white shadow-lg shadow-red-500/30"
@@ -824,31 +825,35 @@ function ResultsScreen({
       <div className="text-center mb-8">
         <div className="text-6xl mb-4">🎭</div>
         <h1 className="text-4xl font-bold text-white mb-2">Oyun Bitti!</h1>
-        <p className="text-slate-400">Gizli kelime ve sahte kişi(ler) açıklandı</p>
+        <p className="text-slate-400">Gizli kelime ve imposter(lar) açıklandı</p>
       </div>
 
-      <div className="bg-slate-800/50 rounded-2xl p-6 max-w-sm w-full border border-slate-700 mb-6">
-        <div className="text-center mb-4">
-          <p className="text-slate-400 mb-1">Gizli kelime şuydu:</p>
-          <p className="text-3xl font-bold text-white">{currentWord}</p>
-        </div>
+      <div className={`${GAME_CARD} border-slate-700 mb-6`}>
+        <div className={GAME_CARD_BODY}>
+          <div className="flex-1 flex flex-col items-center justify-evenly gap-4 w-full">
+            <div className="text-center">
+              <p className="text-slate-400 mb-1">Gizli kelime şuydu:</p>
+              <p className="text-3xl font-bold text-white">{currentWord}</p>
+            </div>
 
-        <div className="border-t border-slate-600 pt-4">
-          <p className="text-slate-400 mb-3">Sahte kişi(ler):</p>
-          <div className="space-y-2">
-            {imposters.map((imposter) => (
-              <div
-                key={imposter.id}
-                className="bg-red-500/20 text-red-400 px-4 py-2 rounded-lg font-medium text-center"
-              >
-                {imposter.name}
+            <div className="border-t border-slate-600 pt-4 w-full">
+              <p className="text-slate-400 mb-3">İmposter(lar):</p>
+              <div className="flex flex-col items-center gap-2">
+                {imposters.map((imposter) => (
+                  <div
+                    key={imposter.id}
+                    className="bg-red-500/20 text-red-400 px-4 py-2 rounded-lg font-medium inline-block"
+                  >
+                    {imposter.name}
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="flex gap-4 max-w-sm w-full">
+      <div className={`flex gap-4 ${CARD_WIDTH}`}>
         <button
           onClick={onNewRound}
           className="flex-1 py-4 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-colors"
